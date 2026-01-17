@@ -131,9 +131,6 @@
          * MOON BLOOM® - NEON EDITION + GEMINI AI INTEGRATION
          */
 
-        // --- Configuración API OpenAI (ChatGPT) ---
-        const apiKey = "INSERT-YOUR-KEY-HERE"; // Introduce tu clave API de OpenAI aquí, o déjalo vacío para usar la predetermindada del entorno si aplica
-
         // --- Componente: El Oráculo Lunar (AI Consultant) ---
         const AIConsultant = () => {
             const [isOpen, setIsOpen] = useState(false);
@@ -141,10 +138,36 @@
             const [response, setResponse] = useState(null);
             const [isLoading, setIsLoading] = useState(false);
             const [error, setError] = useState(null);
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('moon_bloom_openai_key') || '');
+            const [tempKey, setTempKey] = useState('');
+
+            const handleSaveKey = (e) => {
+                e.preventDefault();
+                if (tempKey.trim().startsWith('sk-')) {
+                    localStorage.setItem('moon_bloom_openai_key', tempKey.trim());
+                    setApiKey(tempKey.trim());
+                    setTempKey('');
+                } else {
+                    setError("La clave debe empezar por 'sk-'");
+                }
+            };
+
+            const handleResetKey = () => {
+                if (confirm("¿Borrar tu clave API de este dispositivo?")) {
+                    localStorage.removeItem('moon_bloom_openai_key');
+                    setApiKey('');
+                    setResponse(null);
+                    setQuery('');
+                }
+            };
 
             const handleConsultation = async (e) => {
                 e.preventDefault();
                 if (!query.trim()) return;
+                if (!apiKey) {
+                    setError("Necesitas configurar tu clave API primero.");
+                    return;
+                }
 
                 setIsLoading(true);
                 setResponse(null);
@@ -187,6 +210,9 @@
 
                     if (!response.ok) {
                         const errorData = await response.json();
+                        if (errorData.error?.code === 'invalid_api_key') {
+                            throw new Error("Clave API inválida. Por favor verifícala.");
+                        }
                         throw new Error(errorData.error?.message || 'Error al conectar con el Oráculo.');
                     }
 
@@ -238,80 +264,126 @@
                                             <Sparkles className="text-fuchsia-400 w-5 h-5" />
                                             <h3 className="text-white font-bold tracking-widest uppercase">Oráculo Lunar IA</h3>
                                         </div>
-                                        <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white transition-colors">
-                                            <X className="w-6 h-6" />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            {apiKey && (
+                                                <button onClick={handleResetKey} className="text-xs text-white/30 hover:text-red-400 transition-colors mr-2" title="Borrar Clave API">
+                                                    Reset
+                                                </button>
+                                            )}
+                                            <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white transition-colors">
+                                                <X className="w-6 h-6" />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* Body Modal */}
                                     <div className="p-6 max-h-[70vh] overflow-y-auto">
-                                        {!response && !isLoading && (
-                                            <div className="text-center mb-8">
-                                                <div className="w-16 h-16 bg-fuchsia-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-fuchsia-500/30">
-                                                    <Moon className="w-8 h-8 text-fuchsia-400" />
+                                        {!apiKey ? (
+                                            // PANTALLA DE CONFIGURACIÓN DE CLAVE
+                                            <div className="text-center space-y-6 animate-fadeIn">
+                                                <div className="w-16 h-16 bg-fuchsia-500/10 rounded-full flex items-center justify-center mx-auto border border-fuchsia-500/30">
+                                                    <Loader2 className="w-8 h-8 text-fuchsia-400 animate-spin-slow" />
                                                 </div>
-                                                <p className="text-gray-300 text-sm leading-relaxed">
-                                                    Cuéntame sobre tu evento, tu outfit o cómo te sientes hoy. <br />
-                                                    El cosmos diseñará el look perfecto para ti.
-                                                </p>
-                                                <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                                                    <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Boda de día en jardín"</span>
-                                                    <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Look cyberpunk para fiesta"</span>
-                                                    <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Manicura elegante oficina"</span>
+                                                <div>
+                                                    <h4 className="text-xl font-bold text-white mb-2">Configuración Inicial</h4>
+                                                    <p className="text-gray-400 text-sm">
+                                                        Para activar el cerebro de <strong>GPT-4o</strong>, necesitamos tu clave API de OpenAI.
+                                                        <br />
+                                                        <span className="text-xs text-white/30">(Se guardará solo en tu navegador 🔒)</span>
+                                                    </p>
                                                 </div>
-                                            </div>
-                                        )}
-
-                                        {isLoading && (
-                                            <div className="flex flex-col items-center justify-center py-10 space-y-4">
-                                                <Loader2 className="w-10 h-10 text-fuchsia-500 animate-spin-slow" />
-                                                <p className="text-fuchsia-300 text-xs animate-pulse tracking-widest uppercase">Consultando las estrellas...</p>
-                                            </div>
-                                        )}
-
-                                        {response && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                                className="bg-fuchsia-900/10 border border-fuchsia-500/30 p-4 rounded-xl mb-6 relative"
-                                            >
-                                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-fuchsia-500 opacity-50"></div>
-                                                <h4 className="text-fuchsia-400 text-xs font-bold uppercase mb-2 tracking-widest flex items-center gap-2">
-                                                    <Star className="w-3 h-3" /> Recomendación Astral
-                                                </h4>
-                                                <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
-                                                    {response}
-                                                </div>
-                                                <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
-                                                    <button className="text-xs text-white bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 cursor-pointer">
-                                                        Reservar este Look <ArrowRight className="w-3 h-3" />
+                                                <form onSubmit={handleSaveKey} className="space-y-4">
+                                                    <input
+                                                        type="password"
+                                                        value={tempKey}
+                                                        onChange={(e) => setTempKey(e.target.value)}
+                                                        placeholder="sk-..."
+                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-fuchsia-500 transition-colors text-center"
+                                                        autoFocus
+                                                    />
+                                                    {error && <p className="text-red-400 text-xs">{error}</p>}
+                                                    <button
+                                                        type="submit"
+                                                        disabled={!tempKey}
+                                                        className="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 rounded-lg transition-all shadow-[0_0_20px_#d946ef50] disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        ACTIVAR ORÁCULO
                                                     </button>
-                                                </div>
-                                            </motion.div>
-                                        )}
-
-                                        {error && (
-                                            <div className="p-3 bg-red-900/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center mb-4">
-                                                {error}
+                                                </form>
                                             </div>
-                                        )}
+                                        ) : (
+                                            // PANTALLA DE CHAT NORMAL
+                                            <>
+                                                {!response && !isLoading && (
+                                                    <div className="text-center mb-8">
+                                                        <div className="w-16 h-16 bg-fuchsia-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-fuchsia-500/30">
+                                                            <Moon className="w-8 h-8 text-fuchsia-400" />
+                                                        </div>
+                                                        <p className="text-gray-300 text-sm leading-relaxed">
+                                                            Cuéntame sobre tu evento, tu outfit o cómo te sientes hoy. <br />
+                                                            El cosmos diseñará el look perfecto para ti.
+                                                        </p>
 
-                                        <form onSubmit={handleConsultation} className="relative mt-4">
-                                            <input
-                                                type="text"
-                                                value={query}
-                                                onChange={(e) => setQuery(e.target.value)}
-                                                placeholder="Describe tu evento o estilo..."
-                                                className="w-full bg-black border border-white/20 rounded-xl py-3 pl-4 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500 transition-all cursor-text"
-                                                disabled={isLoading}
-                                            />
-                                            <button
-                                                type="submit"
-                                                disabled={isLoading || !query.trim()}
-                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-fuchsia-600 rounded-lg text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <Send className="w-4 h-4" />
-                                            </button>
-                                        </form>
+                                                        <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                                                            <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Boda de día en jardín"</span>
+                                                            <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Look cyberpunk para fiesta"</span>
+                                                            <span className="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">"Manicura elegante oficina"</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {isLoading && (
+                                                    <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                                                        <Loader2 className="w-10 h-10 text-fuchsia-500 animate-spin-slow" />
+                                                        <p className="text-fuchsia-300 text-xs animate-pulse tracking-widest uppercase">Consultando las estrellas...</p>
+                                                    </div>
+                                                )}
+
+                                                {response && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                                                        className="bg-fuchsia-900/10 border border-fuchsia-500/30 p-4 rounded-xl mb-6 relative"
+                                                    >
+                                                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-fuchsia-500 opacity-50"></div>
+                                                        <h4 className="text-fuchsia-400 text-xs font-bold uppercase mb-2 tracking-widest flex items-center gap-2">
+                                                            <Star className="w-3 h-3" /> Recomendación Astral
+                                                        </h4>
+                                                        <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                                                            {response}
+                                                        </div>
+                                                        <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
+                                                            <button className="text-xs text-white bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 cursor-pointer">
+                                                                Reservar este Look <ArrowRight className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+
+                                                {error && (
+                                                    <div className="p-3 bg-red-900/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center mb-4">
+                                                        {error}
+                                                    </div>
+                                                )}
+
+                                                <form onSubmit={handleConsultation} className="relative mt-4">
+                                                    <input
+                                                        type="text"
+                                                        value={query}
+                                                        onChange={(e) => setQuery(e.target.value)}
+                                                        placeholder="Describe tu evento o estilo..."
+                                                        className="w-full bg-black border border-white/20 rounded-xl py-3 pl-4 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500 transition-all cursor-text"
+                                                        disabled={isLoading}
+                                                    />
+                                                    <button
+                                                        type="submit"
+                                                        disabled={isLoading || !query.trim()}
+                                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-fuchsia-600 rounded-lg text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        <Send className="w-4 h-4" />
+                                                    </button>
+                                                </form>
+                                            </>
+                                        )}
                                     </div>
                                 </motion.div>
                             </motion.div>
