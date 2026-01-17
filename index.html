@@ -1265,11 +1265,40 @@
             );
         };
 
-        function App() {
+        // --- Componente Principal ---
+        const App = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const { scrollYProgress } = useScroll();
-            const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+            const scaleX = useSpring(scrollYProgress, {
+                stiffness: 100,
+                damping: 30,
+                restDelta: 0.001
+            });
+
             const videoRef = useRef(null);
+
+            // Force Video Autoplay Fix
+            useEffect(() => {
+                const playVideo = async () => {
+                    if (videoRef.current) {
+                        try {
+                            videoRef.current.muted = true; // Ensure muted for autoplay policy
+                            await videoRef.current.play();
+                        } catch (err) {
+                            console.error("Video autoplay blocked:", err);
+                            // Retry once on interaction (fallback)
+                            const retryPlay = () => {
+                                videoRef.current?.play();
+                                document.removeEventListener('click', retryPlay);
+                                document.removeEventListener('touchstart', retryPlay);
+                            };
+                            document.addEventListener('click', retryPlay);
+                            document.addEventListener('touchstart', retryPlay);
+                        }
+                    }
+                };
+                playVideo();
+            }, []);
 
             useEffect(() => {
                 if (videoRef.current) {
