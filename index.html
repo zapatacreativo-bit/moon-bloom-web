@@ -47,8 +47,8 @@
     <!-- jsPDF para generación de PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Babel (Para que el navegador entienda React) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Compilador Babel (para JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
 
     <!-- Mapa de Importaciones (Trae las librerías necesarias desde la nube) -->
     <script type="importmap">
@@ -1326,9 +1326,34 @@
         }
 
         // --- Componente Principal ---
+        // --- Componente Principal ---
         const App = () => {
+            const [count, setCount] = React.useState(0);
+            return (
+                <div className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center p-4">
+                    <h1 className="text-4xl font-bold mb-4 text-fuchsia-500">TEST MODE ACTIVE</h1>
+                    <p className="mb-4">Si ves esto, React y Babel funcionan correctamente.</p>
+                    <div className="p-4 border border-white/20 rounded">
+                        <p>Contador: {count}</p>
+                        <button
+                            onClick={() => setCount(c => c + 1)}
+                            className="mt-2 px-4 py-2 bg-fuchsia-600 rounded hover:bg-fuchsia-500"
+                        >
+                            Click me
+                        </button>
+                    </div>
+                    <p className="mt-8 text-gray-500 text-xs text-center max-w-md">
+                        Estamos aislando un error en la aplicación principal.
+                        Si esto carga, el error está en el código de Moon Bloom, no en los servidores.
+                    </p>
+                </div>
+            );
+        };
+
+        const App_Legado = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const { scrollYProgress } = useScroll();
+
             const scaleX = useSpring(scrollYProgress, {
                 stiffness: 100,
                 damping: 30,
