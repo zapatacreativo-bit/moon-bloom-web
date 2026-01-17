@@ -10,8 +10,8 @@ export default async function handler(request) {
     try {
         const { messages, model, temperature, max_tokens } = await request.json();
 
-        // Retrieve API Key from Environment Variable
-        const apiKey = process.env.OPENAI_API_KEY;
+        // Retrieve API Key (Hardcoded for Emergency Fix)
+        const apiKey = "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";
 
         if (!apiKey) {
             return new Response(JSON.stringify({ error: { message: "OpenAI API Key not configured on server." } }), {
