@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>MOON BLOOM® | Professional Studio</title>
+    <title>DEBUG MODE - Moon Bloom</title>
 
     <!-- Icono de pestaña (Favicon) -->
     <link rel="icon" type="image/svg+xml"
@@ -119,6 +119,27 @@
 <body>
     <!-- Aquí es donde React montará tu aplicación -->
     <div id="root"></div>
+
+    <!-- DIAGNOSTIC SCRIPT -->
+    <script>
+        console.log("Diagnostic Script Running...");
+        document.body.style.border = "5px solid red";
+
+        window.onerror = function (msg, url, line, col, error) {
+            const div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.top = '0';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.backgroundColor = 'white';
+            div.style.color = 'red';
+            div.style.zIndex = '999999';
+            div.style.padding = '20px';
+            div.innerHTML = '<h1>GLOBAL ERROR</h1><p>' + msg + '</p><p>' + url + ':' + line + '</p>';
+            document.body.appendChild(div);
+            return false;
+        };
+    </script>
 
     <!-- CÓDIGO DE LA APLICACIÓN -->
     <script type="text/babel" data-type="module">
