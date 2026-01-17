@@ -1,23 +1,16 @@
-export const config = {
-    runtime: 'edge',
-};
-
-export default async function handler(request) {
-    if (request.method !== 'POST') {
-        return new Response('Method not allowed', { status: 405 });
+export default async function handler(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
-        const { messages, model, temperature, max_tokens } = await request.json();
+        const { messages, model, temperature, max_tokens } = req.body;
 
         // Retrieve API Key (Hardcoded for Emergency Fix)
         const apiKey = "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";
 
         if (!apiKey) {
-            return new Response(JSON.stringify({ error: { message: "OpenAI API Key not configured on server." } }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            return res.status(500).json({ error: { message: "OpenAI API Key not configured on server." } });
         }
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -36,15 +29,14 @@ export default async function handler(request) {
 
         const data = await response.json();
 
-        return new Response(JSON.stringify(data), {
-            status: response.status,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        if (!response.ok) {
+            return res.status(response.status).json(data);
+        }
+
+        return res.status(200).json(data);
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: { message: "Internal Server Error" } }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        console.error("Server Error:", error);
+        return res.status(500).json({ error: { message: "Internal Server Error" } });
     }
 }
