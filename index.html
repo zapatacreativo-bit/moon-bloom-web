@@ -1266,6 +1266,44 @@
             );
         };
 
+
+        // --- Error Boundary for Debugging ---
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, error: null, errorInfo: null };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true };
+            }
+
+            componentDidCatch(error, errorInfo) {
+                this.setState({ error, errorInfo });
+                console.error("Uncaught error:", error, errorInfo);
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="min-h-screen flex items-center justify-center bg-black text-red-500 p-10 font-mono text-xs overflow-auto">
+                            <div className="max-w-4xl w-full border border-red-900/50 p-6 rounded-lg bg-red-900/10">
+                                <h1 className="text-xl font-bold mb-4">CRITICAL ERROR</h1>
+                                <div className="mb-4 p-4 bg-black rounded border border-red-500/30">
+                                    {this.state.error && this.state.error.toString()}
+                                </div>
+                                <pre className="whitespace-pre-wrap text-gray-400">
+                                    {this.state.errorInfo && this.state.errorInfo.componentStack}
+                                </pre>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return this.props.children;
+            }
+        }
+
         // --- Componente Principal ---
         const App = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -1885,7 +1923,11 @@
 
         // --- Renderizado de la aplicación ---
         const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(
+            <ErrorBoundary>
+                <App />
+            </ErrorBoundary>
+        );
     </script>
 </body>
 
