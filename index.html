@@ -167,8 +167,8 @@
                         Sé concisa pero inspiradora. Usa emojis lunares y brillantes (🌙, ✨, 💜).
                     `;
 
-                    // Call Serverless Proxy instead of direct OpenAI
-                    const response = await fetch('/api/oracle', {
+                    // Call Serverless Proxy (Renamed to Galaxy to bust cache)
+                    const response = await fetch('/api/galaxy', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
