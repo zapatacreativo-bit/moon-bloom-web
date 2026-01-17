@@ -493,7 +493,7 @@
                     const totalConIVA = Math.round(totalMin * 1.21);
 
                     // Línea separadora y TOTAL
-                    y += tarifas.length * 10 + 5;
+                    y += tarifas.length * 8 + 5; // Reduced spacing multiplier from 10 to 8
                     doc.setDrawColor(...magenta);
                     doc.setLineWidth(0.3);
                     doc.line(20, y, 190, y);
@@ -506,27 +506,33 @@
                     doc.text(`€${totalMin} + IVA = €${totalConIVA}`, 190, y, { align: 'right' });
 
                     // Nota importante
-                    y += 15;
+                    y += 12; // Reduced from 15
                     doc.setTextColor(...gray);
                     doc.setFontSize(8);
                     doc.text('* Precios orientativos basados en el mercado de Madrid 2026. El presupuesto final', 20, y);
-                    y += 5;
+                    y += 4; // Reduced from 5
                     doc.text('  se ajustará según las necesidades específicas del evento.', 20, y);
 
-                    // Contacto
-                    y += 20;
+                    // Contacto Check (Ensure it fits)
+                    if (y > 250) {
+                        doc.addPage();
+                        y = 40;
+                    } else {
+                        y = 250; // Force footer to bottom area if space permits
+                    }
+
                     doc.setDrawColor(...magenta);
                     doc.line(40, y, 170, y);
-                    y += 10;
+                    y += 8; // Reduced from 10
                     doc.setTextColor(...magenta);
                     doc.setFontSize(10);
                     doc.setFont('helvetica', 'bold');
                     doc.text('CONTACTO', 105, y, { align: 'center' });
-                    y += 8;
+                    y += 6; // Reduced from 8
                     doc.setTextColor(...white);
                     doc.setFont('helvetica', 'normal');
-                    doc.text('info@moonbloom.es | +34 XXX XXX XXX', 105, y, { align: 'center' });
-                    y += 6;
+                    doc.text('info@moonbloom.es | +34 600 000 000', 105, y, { align: 'center' });
+                    y += 5; // Reduced from 6
                     doc.text('@moonbloom_beauty', 105, y, { align: 'center' });
 
                     // Footer
