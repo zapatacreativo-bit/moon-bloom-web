@@ -166,7 +166,7 @@
                     `;
 
                     // Call Serverless Proxy instead of direct OpenAI
-                    const response = await fetch('/api/chat', {
+                    const response = await fetch('/api/oracle', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
