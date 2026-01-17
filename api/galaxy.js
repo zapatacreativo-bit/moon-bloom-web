@@ -4,40 +4,54 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { messages, model, temperature, max_tokens } = req.body;
+        const { messages } = req.body;
 
-        // Retrieve API Key from Environment Variable (Secure)
-        const apiKey = process.env.OPENAI_API_KEY;
-
+        const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
-            console.error("Missing OPENAI_API_KEY environment variable");
-            return res.status(500).json({ error: { message: "Server configuration error: Missing API Key" } });
+            console.error("Missing GEMINI_API_KEY environment variable");
+            return res.status(500).json({ error: { message: "Server configuration error: Missing Gemini API Key" } });
         }
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // --- GEMINI ADAPTER LOGIC ---
+        // 1. Extract System Prompt (usually first message)
+        const systemMessage = messages.find(m => m.role === 'system')?.content || "";
+
+        // 2. Extract User Query (last message)
+        const userMessage = messages.reverse().find(m => m.role === 'user')?.content || "";
+
+        // 3. Construct Gemini Prompt
+        const finalPrompt = `${systemMessage}\n\n---\n\nUser Query: ${userMessage}`;
+
+        // 4. Call Gemini Flash API
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                model: model || "gpt-4o",
-                messages: messages,
-                temperature: temperature || 0.7,
-                max_tokens: max_tokens || 300
+                contents: [{
+                    parts: [{ text: finalPrompt }]
+                }]
             })
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-            return res.status(response.status).json(data);
+        if (data.error) {
+            console.error("Gemini API Error:", data.error);
+            throw new Error(data.error.message || "Error calling Gemini API");
         }
 
-        return res.status(200).json(data);
+        // 5. Extract Text
+        const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "El cosmos está en silencio...";
+
+        // 6. Return in OpenAI Format (to avoid breaking Frontend)
+        return res.status(200).json({
+            choices: [{
+                message: { content: aiText }
+            }]
+        });
 
     } catch (error) {
         console.error("Server Error:", error);
-        return res.status(500).json({ error: { message: "Internal Server Error" } });
+        return res.status(500).json({ error: { message: "Internal Server Error: " + error.message } });
     }
 }
