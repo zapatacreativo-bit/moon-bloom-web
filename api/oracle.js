@@ -6,11 +6,12 @@ export default async function handler(req, res) {
     try {
         const { messages, model, temperature, max_tokens } = req.body;
 
-        // Retrieve API Key (Hardcoded for Emergency Fix)
-        const apiKey = "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";
+        // Retrieve API Key from Environment Variable (Secure)
+        const apiKey = process.env.OPENAI_API_KEY;
 
         if (!apiKey) {
-            return res.status(500).json({ error: { message: "OpenAI API Key not configured on server." } });
+            console.error("Missing OPENAI_API_KEY environment variable");
+            return res.status(500).json({ error: { message: "Server configuration error: Missing API Key" } });
         }
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
