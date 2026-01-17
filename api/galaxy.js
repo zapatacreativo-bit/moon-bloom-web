@@ -6,7 +6,9 @@ export default async function handler(req, res) {
     try {
         const { messages } = req.body;
 
-        const apiKey = process.env.GEMINI_API_KEY;
+        // Gemini API Key (Hardcoded for Immediate Fix)
+        const apiKey = "AIzaSyCH1Dh_2vhu9mCSwI1xec9RsDHbFMdXwgs";
+
         if (!apiKey) {
             console.error("Missing GEMINI_API_KEY environment variable");
             return res.status(500).json({ error: { message: "Server configuration error: Missing Gemini API Key" } });
