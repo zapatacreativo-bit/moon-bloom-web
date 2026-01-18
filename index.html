@@ -287,7 +287,13 @@
                                                     }}
                                                 />
                                                 <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
-                                                    <button className="text-xs text-white bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 cursor-pointer">
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsOpen(false);
+                                                            document.getElementById('blueprint')?.scrollIntoView({ behavior: 'smooth' });
+                                                        }}
+                                                        className="text-xs text-white bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded-full transition-colors flex items-center gap-2 cursor-pointer"
+                                                    >
                                                         Reservar este Look <ArrowRight className="w-3 h-3" />
                                                     </button>
                                                 </div>
@@ -1658,7 +1664,9 @@
                                         </p>
 
                                         {/* Blueprint Form - Componente Funcional */}
-                                        <BridalBlueprint />
+                                        <div id="blueprint" className="scroll-mt-32">
+                                            <BridalBlueprint />
+                                        </div>
                                     </div>
                                 </div>
 
