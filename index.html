@@ -1892,29 +1892,89 @@
                     {/* FAQ SECTION (AEO Optimized) */}
                     < FAQSection />
 
-                    {/* FOOTER */}
-                    < footer className="bg-black py-20 border-t border-fuchsia-900/30 relative overflow-hidden" >
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-fuchsia-600 to-transparent shadow-[0_0_20px_#d946ef]"></div>
+                    {/* FOOTER 3-COLUMNS REDESIGN */}
+                    <footer className="bg-black pt-20 pb-10 border-t border-fuchsia-900/30 relative overflow-hidden font-sans">
+                        {/* Fluor Line Top */}
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-fuchsia-600 to-transparent shadow-[0_0_20px_#d946ef]"></div>
 
-                        <div className="container mx-auto px-6 text-center">
-                            <h2 className="text-5xl font-black mb-8 tracking-tighter text-white">MOON BLOOM<sup className="text-[0.6em] align-top -ml-1 relative top-[1px] left-[1px]">®</sup></h2>
-                            <p className="text-gray-500 mb-10 max-w-md mx-auto">
-                                Reservas exclusivas bajo cita previa.
-                                <br />
-                                Madrid • Barcelona • Online
-                            </p>
+                        <div className="container mx-auto px-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                                {/* Col 1: Brand & Social */}
+                                <div className="space-y-6">
+                                    <h2 className="text-3xl font-black tracking-tighter text-white">
+                                        MOON BLOOM<sup className="text-[0.5em] align-top relative -top-[0.2em] left-[0px]">®</sup>
+                                    </h2>
+                                    <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+                                        Elevando el maquillaje a la categoría de arte. Efectos visuales de alto impacto y cuidado personal de lujo en Boadilla del Monte.
+                                    </p>
+                                    <div className="flex gap-4">
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:border-fuchsia-500 hover:text-fuchsia-500 hover:shadow-[0_0_15px_#d946ef] transition-all cursor-pointer">
+                                            <Instagram className="w-5 h-5" />
+                                        </div>
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:border-fuchsia-500 hover:text-fuchsia-500 hover:shadow-[0_0_15px_#d946ef] transition-all cursor-pointer">
+                                            <Facebook className="w-5 h-5" />
+                                        </div>
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:border-fuchsia-500 hover:text-fuchsia-500 hover:shadow-[0_0_15px_#d946ef] transition-all cursor-pointer">
+                                            <Video className="w-5 h-5" />
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div className="flex justify-center gap-8 mb-12">
-                                <SocialButton icon={<Instagram />} />
-                                <SocialButton icon={<Facebook />} />
-                                <SocialButton icon={<Calendar />} />
+                                {/* Col 2: Quick Links */}
+                                <div>
+                                    <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-8 relative inline-block">
+                                        Enlaces Rápidos
+                                        <span className="absolute -bottom-2 left-0 w-10 h-[2px] bg-fuchsia-600"></span>
+                                    </h3>
+                                    <ul className="space-y-3">
+                                        {['Inicio', 'El Estudio', 'Nails Bar', 'Maquillaje Pro', 'Galería'].map((item) => (
+                                            <li key={item}>
+                                                <a href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="text-gray-400 hover:text-fuchsia-400 hover:pl-2 transition-all duration-300 text-sm flex items-center gap-2">
+                                                    <span className="w-1 h-1 bg-fuchsia-500 rounded-full opacity-0 hover:opacity-100 transition-opacity"></span>
+                                                    {item}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Col 3: Contact Info */}
+                                <div>
+                                    <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-8 relative inline-block">
+                                        Contacto
+                                        <span className="absolute -bottom-2 left-0 w-10 h-[2px] bg-fuchsia-600"></span>
+                                    </h3>
+                                    <ul className="space-y-4">
+                                        <li className="flex items-start gap-4 text-gray-400 text-sm">
+                                            <MapPin className="w-5 h-5 text-fuchsia-600 shrink-0 mt-0.5" />
+                                            <span>Boadilla del Monte, 28660<br />Madrid, España</span>
+                                        </li>
+                                        <li className="flex items-center gap-4 text-gray-400 text-sm">
+                                            <Calendar className="w-5 h-5 text-fuchsia-600 shrink-0" />
+                                            <span>Cita Previa Exclusiva</span>
+                                        </li>
+                                        <li className="flex items-center gap-4 text-gray-400 text-sm">
+                                            <Mail className="w-5 h-5 text-fuchsia-600 shrink-0" />
+                                            <a href="mailto:info@moonbloom.es" className="hover:text-white transition-colors">contacto@moonbloom.es</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
-                            <p className="text-gray-700 text-xs tracking-widest uppercase">
-                                © 2026 MOON BLOOM<sup className="text-[0.6em] align-top -ml-0.5 relative top-[1px] left-[1px]">®</sup> Studio. Designed for the bold.
-                            </p>
+                            {/* Divider */}
+                            <div className="w-full h-px bg-white/10 mb-8"></div>
+
+                            {/* Bottom Bar */}
+                            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-medium tracking-wide">
+                                <p>© 2026 MOON BLOOM<sup className="text-[0.6em] align-top px-[1px]">®</sup> Studio. All rights reserved.</p>
+                                <div className="flex gap-6">
+                                    <a href="#" className="hover:text-fuchsia-400 transition-colors">Aviso Legal</a>
+                                    <a href="#" className="hover:text-fuchsia-400 transition-colors">Política de Privacidad</a>
+                                    <a href="#" className="hover:text-fuchsia-400 transition-colors">Cookies</a>
+                                </div>
+                            </div>
                         </div>
-                    </footer >
+                    </footer>
                 </div >
             );
         }
