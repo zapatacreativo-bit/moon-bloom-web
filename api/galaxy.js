@@ -1,6 +1,11 @@
 export default async function handler(req, res) {
     try {
-        const apiKey = "AIzaSyCH1Dh_2vhu9mCSwI1xec9RsDHbFMdXwgs"; // Hardcoded for check
+        // Retrieve API Key from Vercel Environment Variables
+        const apiKey = process.env.GEMINI_API_KEY;
+
+        if (!apiKey) {
+            throw new Error("GEMINI_API_KEY is not configured in environment variables.");
+        }
         const { messages } = req.body;
 
         // --- GEMINI ADAPTER LOGIC ---
