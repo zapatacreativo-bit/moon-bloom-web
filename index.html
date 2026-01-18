@@ -1819,7 +1819,7 @@
                                                 whileInView={{ opacity: 1, scale: 1 }}
                                                 viewport={{ once: true }}
                                                 transition={{ delay: (i % 3) * 0.1 }}
-                                                className={`relative overflow-hidden rounded-lg md:col-span-2 md:row-span-2 bg-black`}
+                                                className={`relative overflow-hidden rounded-lg md:col-span-2 ${spanClass.includes('row-span-2') ? '' : ''}`}
                                             >
                                                 <NewsletterCard />
                                             </motion.div>
