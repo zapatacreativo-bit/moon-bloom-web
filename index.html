@@ -1462,8 +1462,8 @@
 
                             <div className="relative inline-block group">
                                 {/* Particles Effect */}
-                                {/* Intense Glitter & Star Effect (OPTIMIZED HIGH DENSITY) */}
-                                {[...Array(300)].map((_, i) => (
+                                {/* Intense Glitter & Star Effect (BALANCED PERFORMANCE) */}
+                                {[...Array(80)].map((_, i) => (
                                     <motion.div
                                         key={i}
                                         initial={{ opacity: 0, scale: 0 }}
@@ -1471,7 +1471,7 @@
                                             opacity: [0, 1, 0],
                                             scale: [0, Math.random() * 1.5, 0],
                                             rotate: [0, 180],
-                                            y: -20 - Math.random() * 50
+                                            y: -10 - Math.random() * 30
                                         }}
                                         transition={{
                                             duration: 1 + Math.random() * 3,
@@ -1486,10 +1486,11 @@
                                         }}
                                     >
                                         {i % 2 === 0 ? (
-                                            <div className="w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_8px_white] blur-[0.5px]" />
+                                            // Removing heavyweight shadow/blur for perforamnce
+                                            <div className="w-[2px] h-[2px] bg-white rounded-full opacity-80" />
                                         ) : (
                                             <Star
-                                                className={`text-white w-${Math.random() > 0.8 ? 4 : 2} h-${Math.random() > 0.8 ? 4 : 2}`}
+                                                className={`text-white w-${Math.random() > 0.8 ? 3 : 2} h-${Math.random() > 0.8 ? 3 : 2}`}
                                                 fill="white"
                                                 fillOpacity={0.8}
                                                 strokeWidth={0}
