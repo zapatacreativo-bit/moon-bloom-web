@@ -991,12 +991,12 @@
             { url: "./gallery-nail-art.png", title: "Nail Art Deluxe", cat: "Nails" },
             { url: "https://davidzapata.es/proyectos-beta/moon-bloom/maquilladora-fx-ciencia-ficcion-madrid.gif", title: "Fantasy FX", cat: "Caracterización" },
             { url: "./gallery-dark-glam.png", title: "Dark Glam", cat: "Goth" },
-            { url: "./gallery-avant-garde.png", title: "Avant-Garde", cat: "Art" },
+            { url: "https://davidzapata.es/proyectos-beta/moon-bloom/unas-boadilla-de-monte-a-domicilio.png", title: "Nails Strong", cat: "Uñas Duraeras" },
             { url: "./gallery-golden-coffee.png", title: "Golden Hour", cat: "Coffee & Gold" },
             { url: "./moon-bloom-backstage.gif", title: "Luna Mellado Pro", cat: "Backstage" },
             { url: "./neon-glam-editorial.jpg", title: "Neon Glam", cat: "Editorial" },
             { url: "./gallery-opal-nails.png", title: "Opal Dreams", cat: "Nails Art" }, // Restaurada
-            { url: "./gallery-soft-nails.png", title: "Soft Pink Nails", cat: "Nails Art" },
+            { url: "https://davidzapata.es/proyectos-beta/moon-bloom/maquilladora-eventos-especiales-madrid-vip.jpg", title: "Maquillaje Eventos", cat: "VIP Events" },
             { url: "./bridal-visagismo.png", title: "Visagismo Bridal", cat: "Novias" },
             { url: "./fx-blood-horror.jpg", title: "Horror FX", cat: "Caracterización" },
             { url: "./fx-cruella-costume.jpg", title: "Cruella Costume", cat: "Eventos" },
@@ -1040,14 +1040,17 @@
             );
         };
 
-        // --- Componente Newsletter CTA (n8n Webhook) ---
+        // --- Componente: Newsletter (Moon Circle) ---
         const NewsletterCard = () => {
-            const [email, setEmail] = useState('');
             const [name, setName] = useState('');
+            const [email, setEmail] = useState('');
+            const [phone, setPhone] = useState('');
+            const [acceptLegal, setAcceptLegal] = useState(false);
             const [status, setStatus] = useState('idle');
 
             const handleSubmit = async (e) => {
                 e.preventDefault();
+                if (!acceptLegal) return;
                 setStatus('loading');
 
                 try {
@@ -1057,15 +1060,17 @@
                     await fetch(webhookUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, source: 'gallery_cta_moonbloom' })
+                        body: JSON.stringify({ name, email, phone, source: 'gallery_cta_moonbloom' })
                     });
 
                     setStatus('success');
                     setName('');
                     setEmail('');
+                    setPhone('');
+                    setAcceptLegal(false);
                 } catch (err) {
                     console.error('Error suscribiendo:', err);
-                    setStatus('success');
+                    setStatus('success'); // Simulamos éxito aunque falle
                 }
             };
 
@@ -1108,7 +1113,7 @@
                             </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
+                        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
                             <div className="relative group/input">
                                 <input
                                     type="text"
@@ -1129,6 +1134,37 @@
                                     className="w-full bg-transparent border-b-2 border-white/20 px-0 py-2 text-white placeholder-white/20 focus:border-fuchsia-500 focus:bg-transparent focus:outline-none transition-all font-bold text-sm uppercase tracking-wider"
                                 />
                             </div>
+                            <div className="relative group/input">
+                                <input
+                                    type="tel"
+                                    required
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    placeholder="TELÉFONO"
+                                    className="w-full bg-transparent border-b-2 border-white/20 px-0 py-2 text-white placeholder-white/20 focus:border-fuchsia-500 focus:bg-transparent focus:outline-none transition-all font-bold text-sm uppercase tracking-wider"
+                                />
+                            </div>
+
+                            {/* Stylized Legal Checkbox */}
+                            <label className="flex items-start gap-3 cursor-pointer group/legal mt-4">
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        required
+                                        checked={acceptLegal}
+                                        onChange={(e) => setAcceptLegal(e.target.checked)}
+                                        className="peer sr-only" // Hide default checkbox
+                                    />
+                                    <div className="w-5 h-5 border border-white/30 rounded bg-white/5 peer-checked:bg-fuchsia-600 peer-checked:border-fuchsia-500 peer-focus:ring-2 peer-focus:ring-fuchsia-500/50 transition-all flex items-center justify-center">
+                                        <svg className={`w-3 h-3 text-white transition-opacity ${acceptLegal ? 'opacity-100' : 'opacity-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span className="text-[0.6rem] text-gray-500 group-hover/legal:text-gray-300 transition-colors leading-tight select-none">
+                                    He leído y acepto el <a href="#" className="underline hover:text-fuchsia-400">Aviso Legal</a> y la <a href="#" className="underline hover:text-fuchsia-400">Política de Privacidad (LOPD)</a>.
+                                </span>
+                            </label>
 
                             <button
                                 type="submit"
