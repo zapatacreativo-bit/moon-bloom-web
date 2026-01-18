@@ -839,8 +839,8 @@
 
             const randomRange = (min, max) => Math.random() * (max - min) + min;
 
-            const PARTICLE_DENSITY = 0.00030;
-            const BG_PARTICLE_DENSITY = 0.00010;
+            const PARTICLE_DENSITY = 0.00008; // Reduced for performance
+            const BG_PARTICLE_DENSITY = 0.00005; // Reduced for performance
             const MOUSE_RADIUS = 250;
             const RETURN_SPEED = 0.08;
             const DAMPING = 0.90;
@@ -887,16 +887,8 @@
                 lastTimeRef.current = time;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                const pulseOpacity = Math.sin(time * 0.0008) * 0.035 + 0.085;
-
-                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(canvas.width, canvas.height) * 0.7);
-                gradient.addColorStop(0, `rgba(168, 85, 247, ${pulseOpacity})`);
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Removed Gradient Background for Performance
+                // ctx.createRadialGradient...
 
                 const bgParticles = backgroundParticlesRef.current;
                 ctx.fillStyle = "#ffffff";
@@ -950,7 +942,7 @@
                 const handleResize = () => {
                     if (containerRef.current && canvasRef.current) {
                         const { width, height } = containerRef.current.getBoundingClientRect();
-                        const dpr = window.devicePixelRatio || 1;
+                        const dpr = 1; // Cap at 1 for performance
                         canvasRef.current.width = width * dpr;
                         canvasRef.current.height = height * dpr;
                         canvasRef.current.style.width = `${width}px`;
@@ -1369,7 +1361,7 @@
             return (
                 <div className="bg-black min-h-screen text-gray-200 font-sans selection:bg-fuchsia-500 selection:text-black overflow-x-hidden cursor-none">
                     <CustomCursor />
-                    <Starfield />
+
 
                     {/* Consultor IA Integrado */}
                     <AIConsultant />
