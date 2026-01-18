@@ -1418,8 +1418,8 @@
 
                     {/* HERO SECTION */}
                     <header className="relative min-h-screen flex items-center justify-center px-6 pt-20">
-                        {/* Anti-Gravity Particles */}
-                        <AntiGravityCanvas />
+                        {/* Anti-Gravity Particles - DISABLED FOR PERFORMANCE TEST TO FIX VIDEO LAG */}
+                        {/* <AntiGravityCanvas /> */}
 
                         {/* Background GIF Layer */}
                         <div className="absolute inset-0 z-0 select-none pointer-events-none -z-20">
@@ -1430,7 +1430,7 @@
                                 loop
                                 playsInline
                                 preload="auto"
-                                className="w-full h-full object-cover opacity-100"
+                                className="w-full h-full object-cover opacity-100 will-change-transform"
                                 ref={videoRef}
                                 onEnded={() => {
                                     if (videoRef.current) {
