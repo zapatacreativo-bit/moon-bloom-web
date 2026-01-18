@@ -1156,32 +1156,33 @@
             const [flashes, setFlashes] = useState([]);
 
             const triggerFlash = () => {
-                const id = Date.now();
+                const id = Date.now() + Math.random();
                 const x = Math.random() * 100; // %
                 const y = Math.random() * 100; // %
-                const size = 50 + Math.random() * 100; // px
+                const size = 150 + Math.random() * 300; // px (Much bigger)
 
                 setFlashes(prev => [...prev, { id, x, y, size }]);
 
                 // Limpieza automática
                 setTimeout(() => {
                     setFlashes(prev => prev.filter(f => f.id !== id));
-                }, 500);
+                }, 300); // Snappier fade out
             };
 
             const handleInteraction = () => {
-                // Ráfaga de flashes
+                // Ráfaga de flashes INTENSA (Strobe Effect)
                 let count = 0;
                 const interval = setInterval(() => {
                     triggerFlash();
+                    triggerFlash(); // Double flash per tick
                     count++;
-                    if (count > 5) clearInterval(interval);
-                }, 100);
+                    if (count > 15) clearInterval(interval); // More repeated
+                }, 60); // Faster interval
             };
 
             return (
                 <motion.div
-                    className="mt-8 p-6 border-2 border-dashed border-white/20 rounded-xl relative overflow-hidden cursor-crosshair group"
+                    className="mt-12 h-80 border-2 border-dashed border-white/20 rounded-xl relative overflow-hidden cursor-crosshair group flex flex-col items-center justify-center"
                     whileHover={{ scale: 1.02, borderColor: "rgba(255,255,255,0.5)" }}
                     onClick={handleInteraction}
                     onHoverStart={triggerFlash}
@@ -1210,7 +1211,7 @@
                                     width: flash.size,
                                     height: flash.size,
                                     transform: 'translate(-50%, -50%)',
-                                    boxShadow: '0 0 50px 20px white'
+                                    boxShadow: '0 0 150px 100px white'
                                 }}
                             />
                         ))}
